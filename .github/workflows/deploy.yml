@@ -19,13 +19,13 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Give execute permission to mvnw
-      working-directory: BoardGame-main
-      run: chmod +x ./mvnw
-
     - name: Build with Maven Wrapper
       working-directory: BoardGame-main
-      run: ./mvnw clean install -DskipTests
+      run: chmod +x ./mvnw && ./mvnw clean install -DskipTests
+
+    - name: List target directory contents
+      working-directory: BoardGame-main
+      run: ls -l target/
 
     - name: Build Docker image
       working-directory: BoardGame-main
