@@ -20,10 +20,7 @@ jobs:
         java-version: '17'
 
     - name: Build with Maven
-      run: |
-        cd backend
-        mvn clean install -DskipTests
-      working-directory: ./backend
+      run: mvn clean install -DskipTests
 
     - name: Build Docker image
       run: docker build -t boardgame-app .
