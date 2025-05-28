@@ -84,40 +84,41 @@ jobs:
         java-version: 17
 
     - name: Make mvnw executable
-      run: chmod +x ./BoardGame-main/mvnw
+      run: |
+        cd BoardGame-main
+        chmod +x mvnw
 
     - name: Build with Maven
-      run: ./BoardGame-main/mvnw clean install -DskipTests
+      run: |
+        cd BoardGame-main
+        ./mvnw clean install -DskipTests
 
     - name: Build Docker image
-      run: docker build -t boardgame-app ./BoardGame-main
+      run: |
+        cd BoardGame-main
+        docker build -t boardgame-app .
 
-    - name: Save Docker image to TAR (inside BoardGame-main)
-      run: docker save boardgame-app -o ./BoardGame-main/boardgame-app.tar
+    # Save the docker image in the workspace root
+    - name: Save Docker image to TAR
+      run: docker save boardgame-app -o boardgame-app.tar
 
-    - name: Copy docker-compose.yml to workspace root
-      run: cp ./BoardGame-main/docker-compose.yml ./
+    # Copy docker-compose.yml to root for scp-action
+    - name: Copy docker-compose.yml to root
+      run: cp BoardGame-main/docker-compose.yml .
 
     - name: List files before SCP (debug)
       run: |
         echo "Current directory: $(pwd)"
         ls -l
-        ls -l ./BoardGame-main
-        test -f ./BoardGame-main/boardgame-app.tar && echo "Docker TAR exists in BoardGame-main ✅"
-        test -f docker-compose.yml && echo "docker-compose.yml exists in root ✅"
-
-    - name: Move boardgame-app.tar to root for SCP
-      run: cp ./BoardGame-main/boardgame-app.tar ./
-
-    - name: List files after moving TAR (debug)
-      run: ls -l
+        test -f boardgame-app.tar && echo "Docker TAR exists ✅"
+        test -f docker-compose.yml && echo "docker-compose.yml exists ✅"
 
     - name: Copy files to EC2
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
-        port: ${{ secrets.EC2_SSH_PORT }}
+        port: ${{ secrets.EC2_SSH_PORT }} # Make sure this is a number (default 22)
         key: ${{ secrets.EC2_SSH_KEY }}
         source: |
           boardgame-app.tar
@@ -133,9 +134,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd /home/${{ secrets.EC2_USER }}/app
-          echo "Loading Docker image..."
           docker load < boardgame-app.tar
-          echo "Stopping any running containers..."
           docker compose down || true
-          echo "Starting containers with docker compose up -d..."
           docker compose up -d
+
