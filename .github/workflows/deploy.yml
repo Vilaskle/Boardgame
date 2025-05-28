@@ -19,13 +19,13 @@ jobs:
         distribution: temurin
         java-version: 17
 
+    - name: Make mvnw executable
+      working-directory: BoardGame-main
+      run: chmod +x ./mvnw
+
     - name: Build with Maven
       working-directory: BoardGame-main
       run: ./mvnw clean install -DskipTests
-
-    - name: List target directory for debugging
-      working-directory: BoardGame-main
-      run: ls -l target/
 
     - name: Build Docker image
       working-directory: BoardGame-main
