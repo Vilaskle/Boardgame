@@ -1,30 +1,14 @@
-# FROM adoptopenjdk/openjdk11
-  
-# EXPOSE 8080
- 
-# ENV APP_HOME /usr/src/app
-
-# COPY target/*.jar $APP_HOME/app.jar
-
-# WORKDIR $APP_HOME
-
-# CMD ["java", "-jar", "app.jar"]
-
-
-# Use OpenJDK as the base image
-# Use an OpenJDK base image
-FROM eclipse-temurin:17-jdk-jammy
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:17-jdk-alpine
 
 # Set working directory inside container
 WORKDIR /app
 
-# Copy the JAR file from the build context (make sure the JAR name matches your build output)
+# Copy the JAR file from the build context (target folder is inside BoardGame-main)
 COPY target/Boardgame-*.jar app.jar
 
-# Expose the application port (change if needed)
+# Expose the port your Spring Boot app runs on (usually 8080)
 EXPOSE 8080
 
-# Run the app
+# Run the jar file
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
-
