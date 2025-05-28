@@ -62,7 +62,6 @@
 
 
 
-
 name: Build, Test, Dockerize and Deploy to EC2
 
 on:
@@ -112,14 +111,19 @@ jobs:
         test -f boardgame-app.tar && echo "Docker TAR exists ✅"
         test -f docker-compose.yml && echo "docker-compose.yml exists ✅"
 
+    - name: Setup SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY_BASE64 }}" | base64 -d > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
     - name: Debug SSH connectivity (test connection)
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         port: ${{ secrets.EC2_SSH_PORT }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        # IMPORTANT: Add 'passphrase' input only if your key is encrypted; usually keep it blank
+        key_path: ~/.ssh/id_rsa
         script: |
           echo "SSH connection test successful"
           whoami
@@ -131,7 +135,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         port: ${{ secrets.EC2_SSH_PORT }}
-        key: ${{ secrets.EC2_SSH_KEY }}
+        key_path: ~/.ssh/id_rsa
         source: |
           boardgame-app.tar
           docker-compose.yml
@@ -143,7 +147,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         port: ${{ secrets.EC2_SSH_PORT }}
-        key: ${{ secrets.EC2_SSH_KEY }}
+        key_path: ~/.ssh/id_rsa
         script: |
           cd /home/${{ secrets.EC2_USER }}/app
           docker load < boardgame-app.tar
