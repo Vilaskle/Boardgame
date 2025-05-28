@@ -12,17 +12,19 @@
 
 
 # Use OpenJDK as the base image
-FROM openjdk:17-jdk-slim
+# Use an OpenJDK base image
+FROM eclipse-temurin:17-jdk-jammy
 
-# Set working directory
+# Set working directory inside container
 WORKDIR /app
 
-# Copy the jar file from the build context
+# Copy the JAR file from the build context (make sure the JAR name matches your build output)
 COPY target/Boardgame-*.jar app.jar
 
-# Expose the application port (adjust if your app uses a different port)
+# Expose the application port (change if needed)
 EXPOSE 8080
 
-# Command to run the app
+# Run the app
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
 
