@@ -19,14 +19,12 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Verify directory and list contents
-      run: ls -la
-
     - name: Build with Maven
+      working-directory: ./Boardgame-main
       run: mvn clean install -DskipTests
 
     - name: Build Docker image
-      run: docker build -t boardgame-app .
+      run: docker build -t boardgame-app ./Boardgame-main
 
     - name: Save Docker image to TAR
       run: docker save boardgame-app > boardgame-app.tar
