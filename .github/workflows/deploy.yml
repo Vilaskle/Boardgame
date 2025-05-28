@@ -113,16 +113,19 @@ jobs:
         test -f boardgame-app.tar && echo "Docker TAR exists ✅"
         test -f docker-compose.yml && echo "docker-compose.yml exists ✅"
 
+    - name: Debug files for SCP
+      run: |
+        echo "Files ready for SCP:"
+        ls -lh boardgame-app.tar docker-compose.yml
+
     - name: Copy files to EC2
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
-        port: ${{ secrets.EC2_SSH_PORT }} # Make sure this is a number (default 22)
+        port: ${{ secrets.EC2_SSH_PORT }} # default 22
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: |
-          boardgame-app.tar
-          docker-compose.yml
+        source: boardgame-app.tar,docker-compose.yml
         target: /home/${{ secrets.EC2_USER }}/app
 
     - name: SSH into EC2 and Deploy
@@ -137,4 +140,3 @@ jobs:
           docker load < boardgame-app.tar
           docker compose down || true
           docker compose up -d
-
