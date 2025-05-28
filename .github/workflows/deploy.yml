@@ -60,6 +60,7 @@
 #           docker compose down || true
 #           docker compose up -d
 
+
 name: Build, Test, Dockerize and Deploy to EC2
 
 on:
@@ -99,8 +100,12 @@ jobs:
     - name: Copy docker-compose.yml to root
       run: cp BoardGame-main/docker-compose.yml .
 
-    - name: Confirm files exist before SCP
-      run: ls -l boardgame-app.tar docker-compose.yml
+    - name: List files before SCP (debug)
+      run: |
+        echo "Current directory: $(pwd)"
+        ls -l
+        test -f boardgame-app.tar && echo "Docker TAR exists ✅"
+        test -f docker-compose.yml && echo "docker-compose.yml exists ✅"
 
     - name: Copy files to EC2
       uses: appleboy/scp-action@v0.1.7
@@ -126,5 +131,3 @@ jobs:
           docker load < boardgame-app.tar
           docker compose down || true
           docker compose up -d
-
-
