@@ -119,6 +119,7 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         port: ${{ secrets.EC2_SSH_PORT }}
         key: ${{ secrets.EC2_SSH_KEY }}
+        # IMPORTANT: Add 'passphrase' input only if your key is encrypted; usually keep it blank
         script: |
           echo "SSH connection test successful"
           whoami
@@ -148,3 +149,4 @@ jobs:
           docker load < boardgame-app.tar
           docker compose down || true
           docker compose up -d
+
