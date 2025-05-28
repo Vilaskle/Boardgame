@@ -20,11 +20,11 @@ jobs:
         java-version: '17'
 
     - name: Build with Maven
-      working-directory: ./Boardgame-main
+      working-directory: ./BoardGame-main
       run: mvn clean install -DskipTests
 
     - name: Build Docker image
-      run: docker build -t boardgame-app ./Boardgame-main
+      run: docker build -t boardgame-app ./BoardGame-main
 
     - name: Save Docker image to TAR
       run: docker save boardgame-app > boardgame-app.tar
