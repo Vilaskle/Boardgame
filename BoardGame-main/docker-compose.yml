@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  boardgame:
+    image: boardgame-app
+    container_name: boardgame-app
+    ports:
+      - "8080:8080"
+    restart: always
