@@ -99,6 +99,9 @@ jobs:
     - name: Copy docker-compose.yml to root
       run: cp BoardGame-main/docker-compose.yml .
 
+    - name: Confirm files exist before SCP
+      run: ls -l boardgame-app.tar docker-compose.yml
+
     - name: Copy files to EC2
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -123,4 +126,5 @@ jobs:
           docker load < boardgame-app.tar
           docker compose down || true
           docker compose up -d
+
 
