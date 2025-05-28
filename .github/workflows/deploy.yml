@@ -62,7 +62,6 @@
 
 
 
-
 name: Build, Test, Dockerize and Deploy to EC2
 
 on:
@@ -85,30 +84,23 @@ jobs:
         java-version: 17
 
     - name: Make mvnw executable
-      working-directory: Boardgame
-      run: chmod +x ./mvnw
+      run: chmod +x ./Boardgame/mvnw
 
     - name: Build with Maven
-      working-directory: Boardgame
-      run: ./mvnw clean install -DskipTests
+      run: ./Boardgame/mvnw clean install -DskipTests
 
     - name: Build Docker image
-      working-directory: Boardgame
-      run: docker build -t boardgame-app .
+      run: docker build -t boardgame-app ./Boardgame
 
     - name: Save Docker image to TAR
-      working-directory: Boardgame
-      run: docker save boardgame-app > boardgame-app.tar
+      run: docker save boardgame-app > ./Boardgame/boardgame-app.tar
 
-    - name: Copy docker-compose.yml to root (optional)
-      working-directory: Boardgame
-      run: cp docker-compose.yml ../docker-compose.yml
-
-    - name: Debug directory & files
+    - name: Debug files before SCP
       run: |
         pwd
         ls -l Boardgame
-        ls -l
+        test -f Boardgame/boardgame-app.tar && echo "Docker TAR exists ✅"
+        test -f Boardgame/docker-compose.yml && echo "docker-compose.yml exists ✅"
 
     - name: Copy files to EC2
       uses: appleboy/scp-action@v0.1.7
@@ -118,10 +110,9 @@ jobs:
         port: ${{ secrets.EC2_SSH_PORT }}
         key: ${{ secrets.EC2_SSH_KEY }}
         source: |
-          boardgame-app.tar
-          docker-compose.yml
+          Boardgame/boardgame-app.tar
+          Boardgame/docker-compose.yml
         target: /home/${{ secrets.EC2_USER }}/app
-      working-directory: Boardgame
 
     - name: SSH into EC2 and Deploy
       uses: appleboy/ssh-action@v0.1.10
@@ -135,4 +126,6 @@ jobs:
           docker load < boardgame-app.tar
           docker compose down || true
           docker compose up -d
+
+
 
