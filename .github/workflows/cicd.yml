@@ -48,9 +48,9 @@ jobs:
 
     - name: Setup SSH key
       run: |
-        mkdir -p $HOME/.ssh
-        echo "${{ secrets.EC2_SSH_KEY }}" | tee $HOME/.ssh/id_rsa > /dev/null
-        chmod 600 $HOME/.ssh/id_rsa
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
 
     - name: Test SSH connectivity
       uses: appleboy/ssh-action@v0.1.10
@@ -58,7 +58,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         port: ${{ secrets.EC2_SSH_PORT }}
-        key_path: ${{ env.HOME }}/.ssh/id_rsa
+        key_path: ~/.ssh/id_rsa
         script: |
           echo "SSH connection test successful"
           whoami
@@ -70,7 +70,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         port: ${{ secrets.EC2_SSH_PORT }}
-        key_path: ${{ env.HOME }}/.ssh/id_rsa
+        key_path: ~/.ssh/id_rsa
         source: |
           boardgame-app.tar
           docker-compose.yml
@@ -82,7 +82,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         port: ${{ secrets.EC2_SSH_PORT }}
-        key_path: ${{ env.HOME }}/.ssh/id_rsa
+        key_path: ~/.ssh/id_rsa
         script: |
           cd /home/${{ secrets.EC2_USER }}/app
           docker load < boardgame-app.tar
