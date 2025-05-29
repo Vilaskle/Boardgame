@@ -62,7 +62,6 @@
 
 
 
-
 name: Build, Test, Dockerize and Deploy to EC2
 
 on:
@@ -100,7 +99,9 @@ jobs:
         docker build -t boardgame-app .
 
     - name: Save Docker image to TAR
-      run: docker save boardgame-app -o boardgame-app.tar
+      run: |
+        cd BoardGame-main
+        docker save boardgame-app -o ../boardgame-app.tar
 
     - name: Copy docker-compose.yml to root
       run: cp BoardGame-main/docker-compose.yml .
@@ -148,4 +149,3 @@ jobs:
           docker load < boardgame-app.tar
           docker compose down || true
           docker compose up -d
-
