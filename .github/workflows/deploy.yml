@@ -62,6 +62,7 @@
 
 
 
+
 name: Build, Test, Dockerize and Deploy to EC2
 
 on:
@@ -98,10 +99,11 @@ jobs:
         cd BoardGame-main
         docker build -t boardgame-app .
 
-    - name: Save Docker image to TAR at repo root
+    - name: Save Docker image to TAR
       run: |
         cd BoardGame-main
-        docker save boardgame-app -o ../boardgame-app.tar
+        docker save boardgame-app -o boardgame-app.tar
+        mv boardgame-app.tar ../  # Move tar to root for easy access
 
     - name: Copy docker-compose.yml to root
       run: cp BoardGame-main/docker-compose.yml .
@@ -109,7 +111,7 @@ jobs:
     - name: List files before SCP (debug)
       run: |
         echo "Current directory: $(pwd)"
-        ls -l boardgame-app.tar docker-compose.yml
+        ls -l
         test -f boardgame-app.tar && echo "Docker TAR exists ✅"
         test -f docker-compose.yml && echo "docker-compose.yml exists ✅"
 
