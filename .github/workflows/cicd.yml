@@ -38,9 +38,9 @@ jobs:
       run: |
         cd BoardGame-main
         docker save boardgame-app -o boardgame-app.tar
-        mv boardgame-app.tar ../  # Move tar to root for easy access
+        mv boardgame-app.tar ../  # Move tar to root directory
 
-    - name: Copy docker-compose.yml to root
+    - name: Copy docker-compose.yml to root directory
       run: cp BoardGame-main/docker-compose.yml .
 
     - name: List files before SCP (debug)
@@ -74,7 +74,7 @@ jobs:
           docker-compose.yml
         target: /home/${{ secrets.EC2_USER }}/app
 
-    - name: SSH into EC2 and Deploy
+    - name: SSH into EC2 and deploy
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.EC2_HOST }}
@@ -85,4 +85,4 @@ jobs:
           cd /home/${{ secrets.EC2_USER }}/app
           docker load < boardgame-app.tar
           docker compose down || true
-          docker compose up -d
+          docker compose up -d --build
