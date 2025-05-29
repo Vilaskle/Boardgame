@@ -31,6 +31,7 @@ permissions:
 
 jobs:
   deploy:
+    name: Deploy to EC2
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     environment:
@@ -40,44 +41,50 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+
       - name: Deploy BoardGame to EC2 using Docker
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_PROJECT_DIR: ${{ secrets.EC2_PROJECT_DIR }}
         run: |
-          echo "$SSH_PRIVATE_KEY" > key.pem
-          chmod 600 key.pem
+          echo "🔐 Connecting to EC2 instance at $EC2_HOST"
 
-          ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << EOF
+          ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'EOF'
             set -e
 
-            echo "Deploying BoardGame project..."
+            echo "🚀 Starting deployment of BoardGame project..."
 
-            if [ ! -d "$EC2_PROJECT_DIR/.git" ]; then
-              echo "Cloning BoardGame repository..."
-              rm -rf "$EC2_PROJECT_DIR"
-              git clone https://github.com/teamdev8/Boardgame.git "$EC2_PROJECT_DIR"
+            # Use provided directory or fallback to home/app
+            PROJECT_DIR="${EC2_PROJECT_DIR:-/home/$USER/app}"
+
+            if [ ! -d "$PROJECT_DIR/.git" ]; then
+              echo "📦 Cloning repository..."
+              rm -rf "$PROJECT_DIR"
+              git clone https://github.com/teamdev8/Boardgame.git "$PROJECT_DIR"
             fi
 
-            cd "$EC2_PROJECT_DIR"
+            cd "$PROJECT_DIR"
 
-            echo "Pulling latest code from main branch..."
+            echo "🔄 Resetting and updating repository..."
             git reset --hard
             git clean -fd
             git pull origin main
 
-            echo "Stopping any running containers..."
-            docker-compose down || true
+            echo "🛑 Stopping existing containers..."
+            docker compose down || true
 
-            echo "Building Docker image without cache..."
-            docker-compose build --no-cache
+            echo "🔨 Building Docker image..."
+            docker compose build --no-cache
 
-            echo "Starting Docker containers in detached mode..."
-            docker-compose up -d
+            echo "📦 Starting containers..."
+            docker compose up -d
 
-            echo "✅ BoardGame deployment complete."
+            echo "✅ Deployment complete."
           EOF
 
       - name: Cleanup SSH key
