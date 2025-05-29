@@ -111,7 +111,7 @@ jobs:
         test -f boardgame-app.tar && echo "Docker TAR exists ✅"
         test -f docker-compose.yml && echo "docker-compose.yml exists ✅"
 
-    - name: Debug SSH connectivity (test connection)
+    - name: Test SSH connection
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.EC2_HOST }}
