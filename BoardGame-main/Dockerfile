@@ -11,16 +11,17 @@
 # ENTRYPOINT ["java", "-jar", "app.jar"]
 
 
-
-# Use lightweight JDK base image
+# Use a lightweight base image with JDK 17
 FROM eclipse-temurin:17-jdk-alpine
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy the JAR from the target directory
+# Copy the JAR file (assuming only one .jar is in target/)
 COPY target/*.jar app.jar
 
-# Run the JAR
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Expose the default Spring Boot port (optional, but good practice)
+EXPOSE 8080
 
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
