@@ -20,7 +20,9 @@ jobs:
         java-version: 17
 
     - name: Make mvnw executable
-      run: chmod +x BoardGame-main/mvnw
+      run: |
+        cd BoardGame-main
+        chmod +x mvnw
 
     - name: Build with Maven
       run: |
@@ -33,7 +35,10 @@ jobs:
         docker build -t boardgame-app .
 
     - name: Save Docker image to TAR
-      run: docker save boardgame-app -o boardgame-app.tar
+      run: |
+        cd BoardGame-main
+        docker save boardgame-app -o boardgame-app.tar
+        mv boardgame-app.tar ../  # Move tar to root for easy access
 
     - name: Copy docker-compose.yml to root
       run: cp BoardGame-main/docker-compose.yml .
@@ -45,7 +50,7 @@ jobs:
         test -f boardgame-app.tar && echo "Docker TAR exists ✅"
         test -f docker-compose.yml && echo "docker-compose.yml exists ✅"
 
-    - name: Test SSH connectivity
+    - name: Test SSH connection
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.EC2_HOST }}
