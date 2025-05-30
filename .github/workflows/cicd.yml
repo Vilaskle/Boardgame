@@ -17,7 +17,7 @@ jobs:
       - name: Debug workspace root
         run: ls -lah
 
-      # Debug the BoardGame-main directory specifically
+      # Debug the BoardGame-main directory
       - name: Debug BoardGame-main directory
         run: ls -lah BoardGame-main
 
@@ -53,6 +53,20 @@ jobs:
             echo "Extracting tar..."
             tar -xvf boardgame-app.tar -C boardgame
             cd boardgame
+
+            # Install Docker if not present
+            if ! command -v docker &> /dev/null
+            then
+              echo "Docker not found. Installing Docker..."
+              sudo apt-get update
+              sudo apt-get install -y docker.io
+              sudo systemctl start docker
+              sudo systemctl enable docker
+              sudo usermod -aG $USER docker
+              echo "Docker installed."
+            else
+              echo "Docker is already installed."
+            fi
 
             echo "Building JAR with Maven..."
             chmod +x mvnw
