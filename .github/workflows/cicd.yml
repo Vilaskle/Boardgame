@@ -62,7 +62,6 @@ jobs:
               sudo apt-get install -y docker.io
               sudo systemctl start docker
               sudo systemctl enable docker
-              sudo usermod -aG $USER docker
               echo "Docker installed."
             else
               echo "Docker is already installed."
@@ -73,13 +72,13 @@ jobs:
             ./mvnw clean package -DskipTests
 
             echo "Building Docker image..."
-            docker build -t boardgame-app .
+            sudo docker build -t boardgame-app .
 
             echo "Stopping old container..."
-            docker stop boardgame || true
-            docker rm boardgame || true
+            sudo docker stop boardgame || true
+            sudo docker rm boardgame || true
 
             echo "Running new container..."
-            docker run -d --name boardgame -p 8080:8080 boardgame-app
+            sudo docker run -d --name boardgame -p 8080:8080 boardgame-app
 
             echo "Deployment complete!"
