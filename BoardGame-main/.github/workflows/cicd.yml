@@ -43,7 +43,7 @@ jobs:
             if [ ! -d "$EC2_PROJECT_DIR/.git" ]; then
               echo "Cloning repository..."
               rm -rf "$EC2_PROJECT_DIR"
-              git clone https://github.com/SHIVANGOUDAPATIL1234/e-comarce.git "$EC2_PROJECT_DIR"
+              git clone https://github.com/teamdev8/Boardgame.git "$EC2_PROJECT_DIR"
             fi
 
             cd "$EC2_PROJECT_DIR"
