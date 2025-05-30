@@ -13,12 +13,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Debug the workspace root for troubleshooting
+      - name: Debug workspace root
+        run: ls -lah
+
+      # Debug the BoardGame-main directory specifically
+      - name: Debug BoardGame-main directory
+        run: ls -lah BoardGame-main
+
+      # Create .tar archive from within BoardGame-main directory
       - name: Create .tar archive for deployment
         run: |
-          tar -cvf boardgame-app.tar Dockerfile src/ pom.xml .mvn/ mvnw
-
-      - name: Debug workspace
-        run: ls -lah
+          cd BoardGame-main
+          tar -cvf ../boardgame-app.tar Dockerfile src/ pom.xml .mvn/ mvnw
 
       - name: Copy .tar to EC2
         uses: appleboy/scp-action@v0.1.4
