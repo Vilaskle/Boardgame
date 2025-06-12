@@ -3,35 +3,28 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(145deg, #e1f5fe, #fce4ec);
-    background-attachment: fixed;
+    background: linear-gradient(135deg, #e0f7fa, #fce4ec);
     color: #333;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
 /* Page container */
 .container {
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: #ffffffcc;
     border-radius: 16px;
-    padding: 2.5rem;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
-    margin: 3rem auto;
-    max-width: 850px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 2rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+    transition: transform 0.3s ease;
 }
 
 .container:hover {
-    transform: scale(1.015);
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.15);
+    transform: scale(1.01);
 }
 
 /* Headings */
 h1, .h5 {
     color: #4a148c;
-    font-weight: 700;
-    text-align: center;
+    font-weight: 600;
 }
 
 /* Error styling */
@@ -81,38 +74,20 @@ a {
     color: #00796b;
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.3s ease;
 }
 
 a:hover {
     text-decoration: underline;
-    color: #004d40;
 }
 
 /* Navigation */
 nav.navigation-links {
-    background: linear-gradient(to right, #6a1b9a, #8e24aa);
-    padding: 1.2rem 2rem;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    background-color: #6a1b9a;
+    padding: 1rem;
 }
 
 nav.navigation-links a {
     color: white;
-    margin: 0 1.5rem;
-    font-weight: 600;
-    font-size: 1.1rem;
-}
-
-/* Responsive fix */
-@media (max-width: 768px) {
-    .container {
-        margin: 2rem 1rem;
-        padding: 1.5rem;
-    }
-
-    nav.navigation-links a {
-        display: block;
-        margin: 0.5rem 0;
-        text-align: center;
-    }
+    margin: 0 1rem;
+    font-weight: 500;
 }
