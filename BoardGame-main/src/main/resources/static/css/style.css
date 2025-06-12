@@ -1,3 +1,14 @@
+/* .error {
+    color: blue;
+}
+
+textarea {
+    width: 50rem;
+    height: 10rem;
+} */
+
+
+/* Existing styles */
 .error {
     color: blue;
 }
@@ -6,3 +17,29 @@ textarea {
     width: 50rem;
     height: 10rem;
 }
+
+/* New styles */
+body {
+    background-color: #f0f8ff; /* light blue background */
+}
+
+form {
+    background-color: #e6f7ff; /* Light cyan background */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+form input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
