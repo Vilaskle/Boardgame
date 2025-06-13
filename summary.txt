@@ -1,0 +1,87 @@
+“Automated CI/CD Pipeline for Java Web App Deployment with Monitoring Integration”
+👨‍💻 Project Overview
+This project focuses on deploying a Java-based BoardGame web application using DevOps practices, particularly:
+
+Automated CI/CD pipeline with GitHub Actions
+
+Deployment on AWS EC2 instance
+
+Containerization with Docker
+
+Real-time system and application monitoring
+
+🚨 Problem Statement
+Manual deployment is:
+
+Time-consuming
+
+Error-prone
+
+Hard to scale
+
+Solution: Automate deployment and implement robust monitoring for improved reliability and scalability.
+
+🎯 Objectives
+Automate deployment using GitHub Actions
+
+Host application on AWS EC2 using Docker
+
+Monitor system using Node Exporter + Prometheus
+
+Monitor application availability via Blackbox Exporter
+
+Send real-time alerts using Alertmanager (email)
+
+Apply full DevOps lifecycle for production-readiness
+
+🧰 Tools & Technologies
+GitHub (code versioning & CI/CD triggers)
+
+GitHub Actions (CI/CD workflow automation)
+
+Docker (containerization)
+
+AWS EC2 (hosting infrastructure)
+
+Maven (Java build tool)
+
+Prometheus, Node Exporter, Blackbox Exporter, Alertmanager (monitoring & alerting)
+
+🔧 CI/CD Pipeline Implementation
+GitHub repo stores Java app code
+
+GitHub Actions workflow triggers on main branch push
+
+Workflow connects to AWS EC2 via SSH
+
+EC2 instance:
+
+Pulls code
+
+Builds app using mvn clean install
+
+Runs app using Docker
+
+Application becomes live at EC2_IP:8080
+
+⚠️ Challenges
+Not explicitly listed in the slides, but typically includes:
+
+Setting up secure SSH connections
+
+Docker configuration issues
+
+Monitoring tool integrations
+
+Handling deployment errors
+
+✅ Conclusion
+The project successfully:
+
+Implements a complete DevOps pipeline
+
+Achieves automation, observability, reliability, and scalability
+
+Demonstrates real-world use of open-source tools in cloud-based environments
+
+If you want a redesigned version or a one-pager abstract for submission, I can generate that too.
