@@ -1,0 +1,192 @@
+Here are the **step-by-step instructions to run your DevOps project**, titled:
+
+### 🛠️ **Automated CI/CD Pipeline for Java Web App Deployment with Monitoring Integration**
+
+---
+
+### ✅ **Pre-requisites**
+
+Before starting, make sure you have:
+
+* A working **Java-based web app** (like your BoardGame app)
+* An active **AWS EC2 instance** (Ubuntu preferred)
+* A **GitHub repository** for your app
+* A **Dockerfile** and **GitHub Actions workflow** in the repo
+* Installed **monitoring tools** (Node Exporter, Prometheus, Blackbox Exporter, Alertmanager)
+
+---
+
+### 🔁 **Step-by-Step Execution**
+
+---
+
+#### **Step 1: Set Up AWS EC2 Instance**
+
+1. Launch an Ubuntu EC2 instance.
+2. Open port `8080` (for the app), `9100` (Node Exporter), and others as needed.
+3. SSH into the EC2 instance:
+
+   ```bash
+   ssh -i your-key.pem ubuntu@your-ec2-ip
+   ```
+
+---
+
+#### **Step 2: Install Required Packages on EC2**
+
+```bash
+sudo apt update
+sudo apt install docker.io docker-compose default-jdk maven -y
+sudo usermod -aG docker ubuntu  # Add user to Docker group
+```
+
+Log out and back in to apply Docker group changes.
+
+---
+
+#### **Step 3: Clone Your GitHub Repository**
+
+```bash
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+```
+
+---
+
+#### **Step 4: Configure Docker**
+
+Ensure your repository has a valid `Dockerfile`. Example:
+
+```Dockerfile
+FROM openjdk:17
+COPY target/boardgame-app.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+Build and run locally (if not using CI/CD):
+
+```bash
+mvn clean install
+docker build -t boardgame-app .
+docker run -d -p 8080:8080 boardgame-app
+```
+
+---
+
+#### **Step 5: Setup GitHub Actions for CI/CD**
+
+1. In your repo, create `.github/workflows/deploy.yml` with steps to:
+
+   * Build with Maven
+   * SSH into EC2
+   * Pull repo and restart Docker container
+
+Example snippet:
+
+```yaml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd your-repo-name
+            git pull
+            mvn clean install
+            docker build -t boardgame-app .
+            docker stop boardgame || true
+            docker rm boardgame || true
+            docker run -d --name boardgame -p 8080:8080 boardgame-app
+```
+
+---
+
+#### **Step 6: Set GitHub Secrets**
+
+In your repo settings > **Secrets and variables**, set:
+
+* `EC2_HOST` = Public IP of your EC2
+* `EC2_SSH_KEY` = Your private key (no `.pem` headers)
+
+---
+
+#### **Step 7: Push Code to Trigger Deployment**
+
+Any push to the `main` branch will trigger deployment automatically via GitHub Actions.
+
+---
+
+#### **Step 8: Monitor the Application**
+
+Install the monitoring tools on EC2:
+
+* **Node Exporter**:
+
+  ```bash
+  wget https://github.com/prometheus/node_exporter/releases/...
+  ./node_exporter &
+  ```
+
+* **Blackbox Exporter**:
+
+  ```bash
+  wget https://github.com/prometheus/blackbox_exporter/releases/...
+  ./blackbox_exporter &
+  ```
+
+* **Prometheus & Alertmanager**:
+
+  * Configure `prometheus.yml` to scrape targets like:
+
+    ```yaml
+    scrape_configs:
+      - job_name: 'node_exporter'
+        static_configs:
+          - targets: ['localhost:9100']
+      - job_name: 'blackbox'
+        metrics_path: /probe
+        params:
+          module: [http_2xx]
+        static_configs:
+          - targets:
+            - http://localhost:8080
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: localhost:9115
+    ```
+
+Run Prometheus:
+
+```bash
+./prometheus --config.file=prometheus.yml &
+```
+
+Run Alertmanager:
+
+```bash
+./alertmanager --config.file=alertmanager.yml &
+```
+
+---
+
+#### ✅ **Result**
+
+* CI/CD automatically builds and deploys your Java app on EC2.
+* App is live at: `http://<EC2_IP>:8080`
+* Monitoring dashboard and alerts (email) notify on app/system issues.
+
+---
+
+Would you like a shell script or setup guide PDF for this?
